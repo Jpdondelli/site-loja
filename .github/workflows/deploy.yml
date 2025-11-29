@@ -1,0 +1,25 @@
+name: Deploy no ZimaOS
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Copiar arquivos para o servidor
+        run: |
+          mkdir -p /DATA/AppData/site-loja
+          cp -r . /DATA/AppData/site-loja/
+
+      - name: Atualizar Docker
+        run: |
+          cd /DATA/AppData/site-loja
+          docker compose down || true
+          docker image prune -f
+          docker compose up --build -d

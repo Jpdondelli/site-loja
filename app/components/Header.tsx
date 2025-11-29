@@ -18,7 +18,7 @@ import Link from "next/link"; // Importante para navegação do Next.js
 // Lista dos itens do menu
 const pages = [
   { label: "Sobre", href: "#sobre" },
-  { label: "Serviços", href: "#servicos" },
+  //{ label: "Serviços", href: "#servicos" },
   { label: "Orçamento", href: "#orcamento" },
   { label: "Nossos Trabalhos", href: "#trabalhos" },
   { label: "Localização", href: "#localizacao" },

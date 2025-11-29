@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -34,6 +35,41 @@ import SendIcon from "@mui/icons-material/Send";
 import Header from "./components/Header";
 
 export default function Home() {
+  const [formData, setFormData] = useState({
+    nome: "",
+    telefone: "",
+    servico: "",
+    medidas: "",
+    mensagem: "",
+  });
+
+  const handleChange = (e: any) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSend = () => {
+    const { nome, telefone, servico, medidas, mensagem } = formData;
+
+    if (!nome || !telefone) {
+      alert("Por favor, preencha pelo menos Nome e Telefone.");
+      return;
+    }
+    const text =
+      `*Novo Pedido de Orçamento*\n\n` +
+      `*Nome:* ${nome}\n` +
+      `*Contato:* ${telefone}\n` +
+      `*Serviço:* ${servico}\n` +
+      `*Medidas:* ${medidas}\n` +
+      `*Detalhes:* ${mensagem}`;
+
+    const numeroWhatsApp = "5519988515172";
+    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(
+      text
+    )}`;
+
+    // Abre em nova aba
+    window.open(url, "_blank");
+  };
   return (
     <>
       <Header />
@@ -194,16 +230,18 @@ export default function Home() {
                   elevation={6}
                   sx={{
                     height: 400,
-                    bgcolor: "#e2e8f0",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
                     borderRadius: 4,
+                    overflow: "hidden", // <-- Importante: para a imagem não vazar das bordas arredondadas
+                    position: "relative", // <-- Importante: necessário para o Image fill
                   }}
                 >
-                  <Typography variant="h6" color="text.disabled">
-                    Foto da Loja
-                  </Typography>
+                  <Image
+                    src="/Fachada.png" // <-- Nome da sua imagem na pasta public
+                    alt="Fachada da Vidraçaria Dois Córregos"
+                    fill // <-- Faz a imagem preencher todo o Paper
+                    style={{ objectFit: "cover" }} // <-- Faz a imagem cobrir o espaço sem distorcer
+                    sizes="(max-width: 768px) 100vw, 50vw" // <-- Ajuda na performance em celulares
+                  />
                 </Paper>
               </Grid>
             </Grid>
@@ -213,7 +251,7 @@ export default function Home() {
         {/* =================================================================================
           SEÇÃO 3: SERVIÇOS
          ================================================================================= */}
-        <Box id="servicos" sx={{ py: 10, bgcolor: "white" }}>
+        {/* <Box id="servicos" sx={{ py: 10, bgcolor: "white" }}>
           <Container>
             <Typography
               variant="h3"
@@ -309,7 +347,7 @@ export default function Home() {
               ))}
             </Grid>
           </Container>
-        </Box>
+        </Box> */}
 
         {/* =================================================================================
           SEÇÃO 4: NOSSOS TRABALHOS
@@ -330,9 +368,19 @@ export default function Home() {
               </Typography>
             </Box>
 
+            {/* ... (código anterior) ... */}
+
             <Grid container spacing={2}>
-              {[1, 2, 3, 4, 5, 6].map((item) => (
-                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item}>
+              {/* 1. Criamos a lista com os dados das fotos */}
+              {[
+                { src: "/Foto-1.jpeg" },
+                { src: "/Foto-2.jpeg" },
+                { src: "/Foto-3.jpeg" },
+                { src: "/Foto-4.jpeg" },
+                { src: "/Foto-5.jpeg" },
+                { src: "/Foto-6.jpeg" },
+              ].map((item, index) => (
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
                   <CardActionArea>
                     <Box
                       sx={{
@@ -346,9 +394,13 @@ export default function Home() {
                         overflow: "hidden",
                       }}
                     >
-                      <Typography color="text.secondary" fontWeight="bold">
-                        Foto Trabalho {item}
-                      </Typography>
+                      <Image
+                        src={item.src}
+                        alt="imagem de serviço"
+                        fill
+                        style={{ objectFit: "cover" }}
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
                     </Box>
                   </CardActionArea>
                 </Grid>
@@ -398,45 +450,61 @@ export default function Home() {
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <TextField
+                      name="nome" // Importante: name igual ao estado
                       label="Seu Nome"
                       variant="outlined"
                       fullWidth
                       required
+                      value={formData.nome}
+                      onChange={handleChange}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <TextField
+                      name="telefone"
                       label="Telefone / WhatsApp"
                       variant="outlined"
                       fullWidth
                       required
+                      value={formData.telefone}
+                      onChange={handleChange}
                     />
                   </Grid>
                 </Grid>
 
                 <TextField
+                  name="servico"
                   select
                   label="Tipo de Serviço"
-                  defaultValue=""
+                  value={formData.servico}
+                  onChange={handleChange}
                   fullWidth
                 >
-                  <MenuItem value="box">Box de Banheiro</MenuItem>
-                  <MenuItem value="espelho">Espelho</MenuItem>
-                  <MenuItem value="sacada">Envidraçamento de Sacada</MenuItem>
-                  <MenuItem value="outro">Outro</MenuItem>
+                  <MenuItem value="Box de Banheiro">Box de Banheiro</MenuItem>
+                  <MenuItem value="Espelho">Espelho</MenuItem>
+                  <MenuItem value="Envidraçamento de Sacada">
+                    Envidraçamento de Sacada
+                  </MenuItem>
+                  <MenuItem value="Outro">Outro</MenuItem>
                 </TextField>
 
                 <TextField
+                  name="medidas"
                   label="Medidas Aproximadas (Opcional)"
                   variant="outlined"
                   fullWidth
+                  value={formData.medidas}
+                  onChange={handleChange}
                 />
                 <TextField
+                  name="mensagem"
                   label="Detalhes do Pedido"
                   multiline
                   rows={4}
                   variant="outlined"
                   fullWidth
+                  value={formData.mensagem}
+                  onChange={handleChange}
                 />
 
                 <Button
@@ -444,8 +512,9 @@ export default function Home() {
                   size="large"
                   endIcon={<SendIcon />}
                   sx={{ bgcolor: "#0f172a", py: 1.5, mt: 2 }}
+                  onClick={handleSend} // <--- AQUI A MÁGICA ACONTECE
                 >
-                  Enviar Solicitação
+                  Enviar Solicitação pelo WhatsApp
                 </Button>
               </Box>
             </Paper>
@@ -604,7 +673,7 @@ export default function Home() {
               <Grid size={{ xs: 12, md: 4 }}>
                 <Paper
                   component="a"
-                  href="mailto:contato@vidrosdoiscorregos.com.br"
+                  href="mailto:vidracariadoiscorregos@gmail.com"
                   elevation={0}
                   sx={{
                     p: 4,
@@ -623,7 +692,7 @@ export default function Home() {
                     E-mail
                   </Typography>
                   <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
-                    contato@vidrosdoiscorregos.com.br
+                    vidracariadoiscorregos@gmail.com
                   </Typography>
                 </Paper>
               </Grid>
